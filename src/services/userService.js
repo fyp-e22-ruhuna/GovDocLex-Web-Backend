@@ -16,16 +16,12 @@ const register = async (userData) => {
     const {
       email,
       name,
-      role,
-      phoneNumber,
-      position,
-      department,
-      employeeId,
-      gender,
+      userId,
+
     } = userData;
 
     const existingUser = await UserModel.findOne({
-      $or: [{ email }, { employeeId }],
+      $or: [{ email }, { userId }],
     });
     if (existingUser) {
       throw new Error("Email or Employee ID already exists");
@@ -40,10 +36,10 @@ const register = async (userData) => {
       email,
       password: hashedPassword,
       name,
-      role,
-      phoneNumber,
-      employeeId,
-      isPasswordChanged: role === "admin" ? true : false,
+      userId,
+ 
+ 
+      // isPasswordChanged: role === "admin" ? true : false,
     });
 
     await newUser.save();
@@ -58,10 +54,10 @@ const register = async (userData) => {
 
 const login = async (loginData) => {
   try {
-    const { username, password } = loginData;
-    const user = await UserModel.findOne({ username });
+    const { email, password } = loginData;
+    const user = await UserModel.findOne({ email });
 
-    if (!user) {
+    if (!email) {
       throw new Error("Invalid credentials");
     }
 
@@ -73,7 +69,7 @@ const login = async (loginData) => {
     const payload = {
       user: {
         id: user._id,
-        role: user.role,
+        // role: user.role,
         email: user.email,
       },
     };
