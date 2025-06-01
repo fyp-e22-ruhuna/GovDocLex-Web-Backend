@@ -1,38 +1,63 @@
 const userService = require("../services/userService");
-const { validateRequest } = require("../middleware/validationMiddleware");
-const { userSchema } = require("../validation/userValidation");
 
-const login = async (req, res) => {
+// Local signup controller
+exports.localSignup = async (req, res) => {
   try {
-    const tokenData = await userService.login(req.body);
-    res.status(200).json({ message: "Login successful", data: tokenData });
+    const { email, password } = req.body;
+    const { user, token } = await userService.localSignup(email, password);
+    res.status(201).json({
+      status: true,
+      message: "Account created successfully",
+      token
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({
+      status: false,
+      message: error.message
+    });
   }
 };
 
-const register = async (req, res) => {
+// Google auth controller
+exports.googleAuth = async (req, res) => {
+
+  console.log("Google Auth Request Body:", req.body); 
+
   try {
-    const user = await userService.register(req.body);
-    res.status(201).json({ message: "Registration successful", data: user });
+    const { credential } = req.body;
+    const { user, token } = await userService.googleAuth(credential);
+    res.status(200).json({
+      status: true,
+      message: "Authentication successful",
+      token
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({
+      status: false,
+      message: error.message
+    });
   }
 };
 
-const pinmessage = async (req, res) => {
+exports.localSignIn = async (req, res) => {
   try {
-    userService.pinMessage(); // call the service
-    res.status(200).json({ message: "Pin message called" });
+    const { email, password } = req.body;
+    const { user, token } = await userService.localSignIn(email, password);
+
+    const userResponse = { ...user._doc };
+    delete userResponse.password;
+
+    res.json({
+      status: true,
+      message: "Login successful",
+      user: userResponse,
+      token
+    });
   } catch (error) {
-    console.error("Error in pinmessage controller:", error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(400).json({
+      status: false,
+      message: error.message
+    });
   }
 };
 
-
-module.exports = {
-  login,
-  register: [validateRequest(userSchema), register],
-  pinmessage,
-};

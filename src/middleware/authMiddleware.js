@@ -15,9 +15,9 @@ const verifyToken = (req, res, next, roles) => {
             : "Invalid token";
         return res.status(401).json({ message: errorMessage });
       } else if (roles.includes(decoded.user.role)) {
-        req.user = decoded.user;  // Attach the user data to req.user
+        req.user = decoded.user;  
         if (decoded.user.role === "admin" && !decoded.user.isPasswordChanged) {
-          // Allow access to the change-password route even if password change is required
+          
           return next();
         }
         next();
