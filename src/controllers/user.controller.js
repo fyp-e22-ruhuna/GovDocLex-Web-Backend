@@ -20,7 +20,19 @@ const register = async (req, res) => {
   }
 };
 
+const pinmessage = async (req, res) => {
+  try {
+    userService.pinMessage(); // call the service
+    res.status(200).json({ message: "Pin message called" });
+  } catch (error) {
+    console.error("Error in pinmessage controller:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
 module.exports = {
   login,
   register: [validateRequest(userSchema), register],
+  pinmessage,
 };
