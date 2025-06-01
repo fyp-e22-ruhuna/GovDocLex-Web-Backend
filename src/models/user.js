@@ -6,17 +6,34 @@ mongoose.connection = connection;
 
 const userSchema = new Schema(
   {
-    username: { type: String, required: true, unique: true },
-    userId:{type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    isPasswordChanged: { type: Boolean, default: false },
-  
-    
-
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, "Invalid email"],
+    },
+    password: {
+      type: String,
+      required: function () {
+        return this.authMethod === "local";
+      },
+      minlength: 8,
+    },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+    authMethod: {
+      type: String,
+      required: true,
+      enum: ["local", "google"],
+      default: "local",
+    },
+    isVerified: { type: Boolean, default: false },
+    passwordChangedAt: Date,
   },
   { timestamps: true }
 );
-
 
 module.exports = mongoose.model("User", userSchema);

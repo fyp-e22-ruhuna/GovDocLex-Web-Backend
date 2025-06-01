@@ -1,16 +1,9 @@
 const express = require("express");
-
-
-const userController = require("../controllers/user.controller");
-const commonController = require("../controllers/common.Controller");
-
-
-const { checkAdminToken } = require("../middleware/authMiddleware");
 const router = express.Router();
+const authController = require("../controllers/user.controller");
 
-router.post("/login", userController.login);
-router.post("/register", userController.register);
-router.get("/pin",userController.pinmessage);
-
+router.post("/login", authController.localSignIn);
+router.post("/signup", authController.localSignup);
+router.post("/google-auth", authController.googleAuth);
 
 module.exports = router;
