@@ -160,7 +160,21 @@ const sendPasswordEmail = async (email, username, password) => {
   }
 };
 
+const pinMessage = () => {
+  console.log("🎯 pinMessage service function called");
+};
+
+
+
+
+
+
+
+
+
+
 module.exports = {
   register,
   login,
+  pinMessage,
 };
